@@ -56,9 +56,7 @@ public class scriptPlayer : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && shotCooldown >= fireRate)
         {
-            GameObject newBullet = Instantiate(bullet);
-            newBullet.transform.position = transform.position;
-            shotCooldown = 0;
+            Shoot();
         }
         else if (shotCooldown <= fireRate)
         {
@@ -67,13 +65,7 @@ public class scriptPlayer : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && dashing == false && (dashCooldown >= dashCoolingTime))
         {
-            Debug.Log("dash");
-            position = transform.position;
-            dash = direction * dashForce;
-
-            GetComponent<Rigidbody2D>().AddForce(dash, ForceMode2D.Impulse);
-            dashing = true;
-            dashCooldown = 0;
+            Dash();
         } else if (dashCooldown <= dashCoolingTime)
         {
             dashCooldown += Time.deltaTime;
@@ -81,10 +73,7 @@ public class scriptPlayer : MonoBehaviour
 
         if (dashing && (timeDashing >= dashDuration))
         {
-            Debug.Log("stop dash");
-            dashing = false;
-            GetComponent<Rigidbody2D>().AddForce(-dash, ForceMode2D.Impulse);
-            timeDashing = 0;
+            StopDash();
         } else 
         {
             if (dashing && timeDashing <= dashDuration)
@@ -92,6 +81,33 @@ public class scriptPlayer : MonoBehaviour
                 timeDashing += Time.deltaTime;
             }
         }
+    }
+
+    private void Shoot()
+    {
+        GameObject newBullet = Instantiate(bullet);
+        newBullet.GetComponent<scriptBullet>().source = "player";
+        newBullet.transform.position = transform.position;
+        shotCooldown = 0;
+    }
+
+    private void Dash()
+    {
+        Debug.Log("dash");
+        position = transform.position;
+        dash = direction * dashForce;
+
+        GetComponent<Rigidbody2D>().AddForce(dash, ForceMode2D.Impulse);
+        dashing = true;
+        dashCooldown = 0;
+    }
+
+    private void StopDash()
+    {
+        Debug.Log("stop dash");
+        dashing = false;
+        GetComponent<Rigidbody2D>().AddForce(-dash, ForceMode2D.Impulse);
+        timeDashing = 0;
     }
 }
 

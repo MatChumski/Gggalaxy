@@ -6,11 +6,20 @@ public class scriptBullet : MonoBehaviour
 {
 
     [SerializeField] private float speed;
+    public string source;
 
     // Start is called before the first frame update
     void Start()
     {
-        GetComponent<Rigidbody2D>().AddForce(Vector2.up * speed, ForceMode2D.Impulse);
+        if (source == "player")
+        {
+            GetComponent<Rigidbody2D>().AddForce(Vector2.up * speed, ForceMode2D.Impulse);
+        } 
+        else if (source == "enemy")
+        {
+            GetComponent<Rigidbody2D>().AddForce(Vector2.down * speed, ForceMode2D.Impulse);
+        }
+
     }
 
     // Update is called once per frame
