@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class scriptEnemy : MonoBehaviour
 {
@@ -9,14 +10,18 @@ public class scriptEnemy : MonoBehaviour
     [SerializeField] private GameObject bulletImp;
 
     [SerializeField] private float speed;
-    private float minSpeed = 4f;
-    private float maxSpeed = 6f;
+    public float minSpeed;
+    public float maxSpeed;
 
     private float fireRate;
     private float fireCooldown;
+    public float fireAmount;
 
     private scriptGameHandler handler;
     private bool alive;
+
+    public float rightLimit;
+    public float leftLimit;
 
     // Start is called before the first frame update
     void Start()
@@ -35,7 +40,7 @@ public class scriptEnemy : MonoBehaviour
         if (direction == Vector3.right)
         {
             transform.position += Vector3.right * speed * Time.deltaTime;
-            if (transform.position.x >= 8.5)
+            if (transform.position.x >= rightLimit)
             {
                 direction = Vector3.left;
             }
@@ -43,7 +48,7 @@ public class scriptEnemy : MonoBehaviour
         if (direction == Vector3.left)
         {
             transform.position += Vector3.left * speed * Time.deltaTime;
-            if (transform.position.x <= -8.5)
+            if (transform.position.x <= leftLimit)
             {
                 direction = Vector3.right;
             }
@@ -51,8 +56,9 @@ public class scriptEnemy : MonoBehaviour
 
         if (fireCooldown >= fireRate)
         {
-            Shoot();            
-        } else
+            Shoot();
+        }
+        else
         {
             fireCooldown += Time.deltaTime;
         }
@@ -60,18 +66,41 @@ public class scriptEnemy : MonoBehaviour
 
     private void Shoot()
     {
-        GameObject bullet = Instantiate(bulletImp);
-        bullet.GetComponent<scriptBullet>().source = "enemy";
-        bullet.transform.position = transform.position;
+        void CreateBullet(float xBullet, float yBullet)
+        {
+            GameObject bullet = Instantiate(bulletImp);
+            scriptBullet bulletScript = bullet.GetComponent<scriptBullet>();
+            bulletScript.source = "enemy";
+            bulletScript.speed = 5f;
+            bullet.transform.position = new Vector3(xBullet, yBullet, 0);
+        }
+
+        switch (fireAmount)
+        {
+            case 1:
+                CreateBullet(transform.position.x, transform.position.y);
+                break;
+            case 2:
+                float xBullet = transform.position.x - 0.25f;
+                float yBullet = transform.position.y;
+                for (int i = 0; i < fireAmount; i++)
+                {
+                    CreateBullet(xBullet, yBullet);
+                    xBullet += 0.5f;
+                }
+                break;
+        }
+
         fireCooldown = 0;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Bullet" && collision.GetComponent<scriptBullet>().source == "player" && alive)
+        if (collision.CompareTag("Bullet") && collision.GetComponent<scriptBullet>().source == "player" && alive)
         {
             alive = false;
             handler.KillEnemy(gameObject);
+            Destroy(collision.gameObject);
         }
     }
 }

@@ -5,8 +5,9 @@ using UnityEngine;
 public class scriptBullet : MonoBehaviour
 {
 
-    [SerializeField] private float speed;
+    public float speed;
     public string source;
+    private float limit;
 
     // Start is called before the first frame update
     void Start()
@@ -14,10 +15,13 @@ public class scriptBullet : MonoBehaviour
         if (source == "player")
         {
             GetComponent<Rigidbody2D>().AddForce(Vector2.up * speed, ForceMode2D.Impulse);
-        } 
+            limit = 10f;
+        }
         else if (source == "enemy")
         {
             GetComponent<Rigidbody2D>().AddForce(Vector2.down * speed, ForceMode2D.Impulse);
+            GetComponent<SpriteRenderer>().color = Color.white;
+            limit = -10f;
         }
 
     }
@@ -25,7 +29,7 @@ public class scriptBullet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (transform.position.y >= 15)
+        if ((source == "player" && transform.position.y >= limit) || (source == "enemy" && transform.position.y <= limit))
         {
             Destroy(this.gameObject);
         }
