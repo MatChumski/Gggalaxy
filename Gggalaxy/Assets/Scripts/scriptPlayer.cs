@@ -110,7 +110,7 @@ public class scriptPlayer : MonoBehaviour
          * siempre y cuando no se esté dasheando, y el enfriamiento
          * se haya completado
          */
-        if (Input.GetKeyDown(KeyCode.LeftShift) && dashing == false && (dashCooldown >= dashCoolingTime))
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !dashing && (dashCooldown >= dashCoolingTime))
         {
             Dash();
         }

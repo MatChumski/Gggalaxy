@@ -382,6 +382,7 @@ GameObject:
   m_Component:
   - component: {fileID: 874830708}
   - component: {fileID: 874830707}
+  - component: {fileID: 874830709}
   m_Layer: 0
   m_Name: GameHandler
   m_TagString: Untagged
@@ -401,7 +402,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c92657d00e1e7af4f94aec1d3b02401c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startWave: 1
+  startWave: 4
+  waveHandler: {fileID: 874830709}
   enemyImp: {fileID: 4874062816920005338, guid: c499471e79fb6414c924211779799777, type: 3}
   wave: 0
   enemySpeed: 0
@@ -426,6 +428,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &874830709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 874830706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50718cfb8ad4381408ca82a6c135b1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1063557616
 GameObject:
   m_ObjectHideFlags: 0

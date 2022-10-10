@@ -6,8 +6,12 @@ public class scriptGameHandler : MonoBehaviour
 {
     [SerializeField] private float startWave;
 
+    public scriptWaves waveHandler;
+    public List<Wave> waveTemplates;
+
     public GameObject enemyImp;
     public float wave;
+    public Wave curWave;
 
     public float enemySpeed;
     public List<GameObject> enemies;
@@ -22,7 +26,189 @@ public class scriptGameHandler : MonoBehaviour
     {
         powerUpSpawnCooldown = 0;
 
+        waveTemplates = new List<Wave>()
+        {
+            // Wave 1
+            new Wave(
+                // CoordsXY
+                new List<float[]>()
+                {
+                    new float[] {-8.4f, 0},
+                    new float[] {-4.4f, 1f},
+                    new float[] {0f, 2f},
+                    new float[] {4.4f, 3f},
+                    new float[] {8.4f, 4f},
+                },
+                // LimitsLR
+                new List<float[]>()
+                {
+                    new float[] {-8.5f, 8.5f},
+                    new float[] {-8.5f, 8.5f},
+                    new float[] {-8.5f, 8.5f},
+                    new float[] {-8.5f, 8.5f},
+                    new float[] {-8.5f, 8.5f},
+                },
+                // Speeds
+                new List<float>()
+                {
+                    5f,
+                    5f,
+                    5f,
+                    5f,
+                    5f
+                },
+                // FireAmounts
+                new List<float>()
+                {
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                }
+                ),
+            // Wave 2
+            new Wave(
+                // CoordsXY
+                new List<float[]>()
+                {
+                    new float[] {-8.4f, 4f},
+                    new float[] {-4.4f, 2f},
+                    new float[] {-2.4f, 0f},
+                    new float[] {2.4f, 0f},
+                    new float[] {4.4f, 2f},
+                    new float[] {8.4f, 4f}
+                },
+                // LimitsLR
+                new List<float[]>()
+                {
+                    new float[] {-8.5f, 0f},
+                    new float[] {-8.5f, 0f},
+                    new float[] {-8.5f, 0f},
+                    new float[] {0f, 8.5f},
+                    new float[] {0f, 8.5f},
+                    new float[] {0f, 8.5f}
+                },
+                // Speeds
+                new List<float>()
+                {
+                    5f,
+                    5f,
+                    5f,
+                    5f,
+                    5f,
+                    5f
+                },
+                // FireAmounts
+                new List<float>()
+                {
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                }
+                ),
+            // Wave 3
+            new Wave(
+                // CoordsXY
+                new List<float[]>()
+                {
+                    new float[] {-8.4f, 0f},
+                    new float[] {-2.4f, 1f},
+                    new float[] {2.4f, 2f},
+                    new float[] {8.4f, 3f},
+                    new float[] {-8.4f, 4f},
+                    new float[] {8.4f, 4f}
+                },
+                // LimitsLR
+                new List<float[]>()
+                {
+                    new float[] {-8.5f, 8.5f},
+                    new float[] {-8.5f, 8.5f},
+                    new float[] {-8.5f, 8.5f},
+                    new float[] {-8.5f, 8.5f},
+                    new float[] {-8.5f, 0f},
+                    new float[] {0f, 8.5f}
+                },
+                // Speeds
+                new List<float>()
+                {
+                    6f,
+                    6f,
+                    6f,
+                    6f,
+                    7f,
+                    7f
+                },
+                // FireAmounts
+                new List<float>()
+                {
+                    1,
+                    1,
+                    1,
+                    1,
+                    2,
+                    2
+                }
+                ),
+            // Wave 4
+            new Wave(
+                // CoordsXY
+                new List<float[]>()
+                {
+                    new float[] {-8.5f, 0},
+                    new float[] {-6.5f, 0.6f},
+                    new float[] {-4.5f, 1.2f},
+                    new float[] {-2.5f, 1.8f},
+                    new float[] {-0.5f, 2.4f},
+                    new float[] {2.5f, 3f},
+                    new float[] {4.5f, 3.6f},
+                    new float[] {6.5f, 4.2f}
+                },
+                // LimitsLR
+                new List<float[]>()
+                {
+                    new float[] {-8.5f, 8.5f},
+                    new float[] {-8.5f, 8.5f},
+                    new float[] {-8.5f, 8.5f},
+                    new float[] {-8.5f, 8.5f},
+                    new float[] {-8.5f, 8.5f},
+                    new float[] {-8.5f, 8.5f},
+                    new float[] {-8.5f, 8.5f},
+                    new float[] {-8.5f, 8.5f}
+                },
+                // Speeds
+                new List<float>()
+                {
+                    6f,
+                    6f,
+                    6f,
+                    6f,
+                    6f,
+                    6f,
+                    6f,
+                    6f
+                },
+                // FireAmounts
+                new List<float>()
+                {
+                    1,
+                    2,
+                    1,
+                    2,
+                    1,
+                    2,
+                    1,
+                    2,
+                }
+                )
+
+        };
+
         wave = startWave;
+        curWave = waveTemplates[(int)wave - 1];
         StartWave();
     }
 
@@ -30,8 +216,9 @@ public class scriptGameHandler : MonoBehaviour
     void Update()
     {
         // Cambia de oleada cuando no quedan enemigos en pantalla
-        if (enemies.Count == 0)
+        if (curWave.enemies.Count == 0)
         {
+            enemies.Clear();
             wave += 1;
             StartWave();
         }
@@ -41,7 +228,8 @@ public class scriptGameHandler : MonoBehaviour
         {
             CreatePowerUp();
             powerUpSpawnCooldown = 0;
-        } else if (powerUpSpawnCooldown < powerUpSpawnTime)
+        }
+        else if (powerUpSpawnCooldown < powerUpSpawnTime)
         {
             powerUpSpawnCooldown += Time.deltaTime;
         }
@@ -75,37 +263,20 @@ public class scriptGameHandler : MonoBehaviour
      */
     public void StartWave()
     {
-        switch (wave)
+        int thisWave;
+        if (wave > waveTemplates.Count)
         {
-            case 1:
-                float posY = 0;
-                float posX = 0;
-                Debug.Log("Wave 1");
-                enemies.Clear();
-
-                CreateEnemies(5);
-                posY = 0.5f;
-                posX = -8.4f;
-
-                for (int i = 0; i < enemies.Count; i++)
-                {
-                    enemies[i].transform.position = new Vector3(posX, posY, 0);
-
-                    enemies[i].GetComponent<scriptEnemy>().leftLimit = -8.5f;
-                    enemies[i].GetComponent<scriptEnemy>().rightLimit = 8.5f;
-
-                    enemies[i].GetComponent<scriptEnemy>().minSpeed = 4f;
-                    enemies[i].GetComponent<scriptEnemy>().maxSpeed = 6f;
-
-                    enemies[i].GetComponent<scriptEnemy>().fireAmount = 1;
-
-                    posY++;
-                    posX += 4;
-                }
-                break;
-            default:
-                break;
+            thisWave = Random.Range(1, waveTemplates.Count + 1) - 1;
+        } else
+        {
+            thisWave = (int)wave - 1;
         }
+
+        curWave = waveTemplates[thisWave];
+        int ene = waveTemplates[thisWave].coordsXY.Count;
+
+        CreateEnemies(ene);
+        curWave.StartWave(enemies);        
     }
 
     /*
@@ -116,13 +287,14 @@ public class scriptGameHandler : MonoBehaviour
     public void KillEnemy(GameObject enemy)
     {
         Destroy(enemy);
-        for (int i = 0; i < enemies.Count; i++)
+
+        for (int i = 0; i < curWave.enemies.Count; i++)
         {
-            if (enemies[i] == enemy)
+            if (curWave.enemies[i] == enemy)
             {
-                enemies.RemoveAt(i);
+                curWave.enemies.RemoveAt(i);
             }
         }
-        Debug.Log("enemies left: " + enemies.Count);
+        Debug.Log("enemies left: " + curWave.enemies.Count);
     }
 }
