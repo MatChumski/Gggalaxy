@@ -299,6 +299,7 @@ public class scriptPlayer : MonoBehaviour
     private void Die()
     {
         Destroy(gameObject);
+        handler.status = "dead";
     }
 
 

@@ -2,6 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * OLEADAS
+ * Las oleadas contienen múltiples listas, para generar
+ * individualmente cada enemigo de la ola con las 
+ * características necesarias
+ * 
+ * enemies: Enemigos
+ * coordsXY: Coordenadas en X y en Y para el enemigo
+ * limitsLR: Límites izquierdo y derecho 
+ * speeds: Velocdiades
+ * fireAmounts: Cantidad de balas
+ */
+
 public class Wave
 {
     public List<GameObject> enemies;
@@ -18,6 +31,12 @@ public class Wave
         this.fireAmounts = fireAmounts;
     }
 
+    /*
+     * INICIAR OLEADA
+     * Se toman los parámetros establecidos en el constructor
+     * Recibe una lista con los enemigos que se van a
+     * instanciar
+     */
     public void StartWave(List<GameObject> enemies)
     {
         this.enemies = enemies;

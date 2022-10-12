@@ -1,10 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class scriptGameHandler : MonoBehaviour
 {
     [SerializeField] private float startWave;
+
+    public string status = "changing";
+    public float timer;
 
     public scriptWaves waveHandler;
     public List<Wave> waveTemplates;
@@ -21,11 +26,35 @@ public class scriptGameHandler : MonoBehaviour
     public float powerUpSpawnTime;
     public float powerUpSpawnCooldown;
 
+    public GameObject waveTitle;
+    public GameObject waveCounter;
+
+    public GameObject gameOverPnl;
+    public GameObject gameOverBtn;
+
     // Start is called before the first frame update
     void Start()
     {
         powerUpSpawnCooldown = 0;
 
+        status = "changing";
+        timer = 3;
+
+        waveTitle = GameObject.Find("Wave Title");
+        waveCounter = GameObject.Find("Wave Counter");
+
+        gameOverPnl = GameObject.Find("Game Over");
+        gameOverBtn = GameObject.Find("Game Over Button");
+
+        gameOverBtn.GetComponent<Button>().onClick.AddListener(Restart);
+
+        gameOverPnl.SetActive(false);
+
+        /*
+         * WAVE TEMPLATES
+         * La idea es tener una lista de oleadas predefinidas que el juego pueda escoger
+         * Cada que se cambie de oleada se va a tomar un número de la lista
+         */
         waveTemplates = new List<Wave>()
         {
             // Wave 1
@@ -209,29 +238,64 @@ public class scriptGameHandler : MonoBehaviour
 
         wave = startWave;
         curWave = waveTemplates[(int)wave - 1];
-        StartWave();
+        //StartWave();
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Cambia de oleada cuando no quedan enemigos en pantalla
-        if (curWave.enemies.Count == 0)
+        switch (status)
         {
-            enemies.Clear();
-            wave += 1;
-            StartWave();
-        }
+            case "changing":
 
-        // Controla la aparición de Power Ups
-        if (powerUpSpawnCooldown >= powerUpSpawnTime)
-        {
-            CreatePowerUp();
-            powerUpSpawnCooldown = 0;
-        }
-        else if (powerUpSpawnCooldown < powerUpSpawnTime)
-        {
-            powerUpSpawnCooldown += Time.deltaTime;
+                waveTitle.SetActive(true);
+                waveCounter.SetActive(true);
+
+                if (timer >= 0)
+                {
+                    waveTitle.GetComponent<Text>().text = "Wave " + wave;
+                    waveCounter.GetComponent<Text>().text = "Starting in\n" + Mathf.Ceil(timer);
+                    timer -= Time.deltaTime;
+                }
+                else
+                {
+                    status = "play";
+
+                    waveTitle.SetActive(false);
+                    waveCounter.SetActive(false);
+
+                    StartWave();
+                }
+
+                break;
+
+            case "play":
+                // Cambia de oleada cuando no quedan enemigos en pantalla
+                if (curWave.enemies.Count == 0)
+                {
+                    enemies.Clear();
+                    wave += 1;
+
+                    status = "changing";
+                    timer = 3f;                    
+                }
+
+                // Controla la aparición de Power Ups
+                if (powerUpSpawnCooldown >= powerUpSpawnTime)
+                {
+                    CreatePowerUp();
+                    powerUpSpawnCooldown = 0;
+                }
+                else if (powerUpSpawnCooldown < powerUpSpawnTime)
+                {
+                    powerUpSpawnCooldown += Time.deltaTime;
+                }
+                break;
+
+            case "dead":
+                gameOverPnl.SetActive(true);
+
+                break;
         }
     }
 
@@ -258,8 +322,9 @@ public class scriptGameHandler : MonoBehaviour
 
     /*
      * INICIAR OLA
-     * TODO: Crear una clase para las oleadas que permita generarlas
-     * de una manera estandarizada
+     * Si la oleada actual es menor o igual a la cantidad de oleadas disponibles,
+     * se escoge ese item de la lista
+     * Si la oleada ya ha superado a la cantidad de plantillas, se toma una al azar
      */
     public void StartWave()
     {
@@ -267,7 +332,8 @@ public class scriptGameHandler : MonoBehaviour
         if (wave > waveTemplates.Count)
         {
             thisWave = Random.Range(1, waveTemplates.Count + 1) - 1;
-        } else
+        }
+        else
         {
             thisWave = (int)wave - 1;
         }
@@ -276,7 +342,7 @@ public class scriptGameHandler : MonoBehaviour
         int ene = waveTemplates[thisWave].coordsXY.Count;
 
         CreateEnemies(ene);
-        curWave.StartWave(enemies);        
+        curWave.StartWave(enemies);
     }
 
     /*
@@ -296,5 +362,10 @@ public class scriptGameHandler : MonoBehaviour
             }
         }
         Debug.Log("enemies left: " + curWave.enemies.Count);
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
