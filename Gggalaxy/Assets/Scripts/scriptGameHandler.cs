@@ -15,6 +15,8 @@ public class scriptGameHandler : MonoBehaviour
     public List<Wave> waveTemplates;
 
     public GameObject enemyImp;
+    public GameObject bossImp;
+
     public float wave;
     public Wave curWave;
 
@@ -251,7 +253,7 @@ public class scriptGameHandler : MonoBehaviour
                 waveTitle.SetActive(true);
                 waveCounter.SetActive(true);
 
-                if (timer >= 0)
+                if (timer >= 0) // Contador antes de iniciar la ola
                 {
                     waveTitle.GetComponent<Text>().text = "Wave " + wave;
                     waveCounter.GetComponent<Text>().text = "Starting in\n" + Mathf.Ceil(timer);
