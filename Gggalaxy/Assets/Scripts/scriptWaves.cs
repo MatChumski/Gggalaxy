@@ -22,13 +22,15 @@ public class Wave
     public List<float[]> limitsLR;
     public List<float> speeds;
     public List<float> fireAmounts;
+    public string type;
 
-    public Wave(List<float[]> coordsXY, List<float[]> limitsLR, List<float> speeds, List<float> fireAmounts)
+    public Wave(List<float[]> coordsXY, List<float[]> limitsLR, List<float> speeds, List<float> fireAmounts, string type)
     {
         this.coordsXY = coordsXY;
         this.limitsLR = limitsLR;
         this.speeds = speeds;
         this.fireAmounts = fireAmounts;
+        this.type = type;
     }
 
     /*
@@ -41,19 +43,37 @@ public class Wave
     {
         this.enemies = enemies;
 
-        for (int i = 0; i < enemies.Count; i++)
+        if (type != "boss")
         {
-            enemies[i].transform.position = new Vector3(coordsXY[i][0], 10, 0);
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                enemies[i].transform.position = new Vector3(coordsXY[i][0], 10, 0);
 
-            scriptEnemy script = enemies[i].GetComponent<scriptEnemy>();
+                scriptEnemy script = enemies[i].GetComponent<scriptEnemy>();
 
-            script.posY = coordsXY[i][1];
-            script.leftLimit = limitsLR[i][0];
-            script.rightLimit = limitsLR[i][1];
-            script.minSpeed = speeds[i] - 2f;
-            script.maxSpeed = speeds[i];
-            script.fireAmount = fireAmounts[i];
+                script.posY = coordsXY[i][1];
+                script.leftLimit = limitsLR[i][0];
+                script.rightLimit = limitsLR[i][1];
+                script.minSpeed = speeds[i] - 2f;
+                script.maxSpeed = speeds[i];
+                script.fireAmount = fireAmounts[i];
+            }
+        } 
+        else
+        {
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                enemies[i].transform.position = new Vector3(coordsXY[i][0], coordsXY[i][1], 0);
+
+                scriptBoss script = enemies[i].GetComponent<scriptBoss>();
+
+                script.leftLimit = limitsLR[i][0];
+                script.rightLimit = limitsLR[i][1];
+                script.speed = speeds[i];
+            }
         }
+
+        
     }
 }
 public class scriptWaves : MonoBehaviour

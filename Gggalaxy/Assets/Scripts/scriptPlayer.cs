@@ -352,7 +352,7 @@ public class scriptPlayer : MonoBehaviour
                 health--;
                 livesManager.ChangeSprite(health);
             }
-            handler.KillEnemy(collision.gameObject);
+            Destroy(collision.gameObject);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -96,7 +97,8 @@ public class scriptGameHandler : MonoBehaviour
                     1,
                     1,
                     1
-                }
+                },
+                "enemy"
                 ),
             // Wave 2
             new Wave(
@@ -139,7 +141,8 @@ public class scriptGameHandler : MonoBehaviour
                     1,
                     1,
                     1
-                }
+                },
+                "enemy"
                 ),
             // Wave 3
             new Wave(
@@ -182,7 +185,8 @@ public class scriptGameHandler : MonoBehaviour
                     1,
                     2,
                     2
-                }
+                },
+                "enemy"
                 ),
             // Wave 4
             new Wave(
@@ -233,8 +237,34 @@ public class scriptGameHandler : MonoBehaviour
                     2,
                     1,
                     2,
-                }
+                },
+                "enemy"
+                ),
+            // Wave 5 (Boss)
+            new Wave(
+                // CoordsXY
+                new List<float[]>()
+                {
+                    new float[] {-8.5f, 3}
+                },
+                // LimitsLR
+                new List<float[]>()
+                {
+                    new float[] {-5f, 5f}
+                },
+                // Speeds
+                new List<float>()
+                {
+                    4f
+                },
+                // FireAmounts
+                new List<float>()
+                {
+                    1
+                },
+                "boss"
                 )
+
 
         };
 
@@ -273,7 +303,7 @@ public class scriptGameHandler : MonoBehaviour
 
             case "play":
                 // Cambia de oleada cuando no quedan enemigos en pantalla
-                if (curWave.enemies.Count == 0)
+                if (GameObject.FindGameObjectsWithTag("Enemy").Length <= 0)
                 {
                     enemies.Clear();
                     wave += 1;
@@ -318,7 +348,14 @@ public class scriptGameHandler : MonoBehaviour
     {
         for (int i = 0; i < amount; i++)
         {
-            enemies.Add(Instantiate(enemyImp));
+            if (curWave.type == "boss")
+            {
+                enemies.Add(Instantiate(bossImp));
+            } 
+            else
+            {
+                enemies.Add(Instantiate(enemyImp));
+            }
         }
     }
 
@@ -328,12 +365,19 @@ public class scriptGameHandler : MonoBehaviour
      * se escoge ese item de la lista
      * Si la oleada ya ha superado a la cantidad de plantillas, se toma una al azar
      */
+
     public void StartWave()
     {
         int thisWave;
         if (wave > waveTemplates.Count)
         {
-            thisWave = Random.Range(1, waveTemplates.Count + 1) - 1;
+            if (wave % 5 == 0)
+            {
+                thisWave = 5 - 1;
+            } else
+            {
+                thisWave = Random.Range(1, waveTemplates.Count) - 1;
+            }
         }
         else
         {
@@ -352,19 +396,19 @@ public class scriptGameHandler : MonoBehaviour
      * Elimina al enemigo tanto del juego como de la lista de 
      * enemigos
      */
-    public void KillEnemy(GameObject enemy)
-    {
-        Destroy(enemy);
+    //public void KillEnemy(GameObject enemy)
+    //{
+    //    Destroy(enemy);
 
-        for (int i = 0; i < curWave.enemies.Count; i++)
-        {
-            if (curWave.enemies[i] == enemy)
-            {
-                curWave.enemies.RemoveAt(i);
-            }
-        }
-        Debug.Log("enemies left: " + curWave.enemies.Count);
-    }
+    //    for (int i = 0; i < curWave.enemies.Count; i++)
+    //    {
+    //        if (curWave.enemies[i] == enemy)
+    //        {
+    //            curWave.enemies.RemoveAt(i);
+    //        }
+    //    }
+    //    Debug.Log("enemies left: " + curWave.enemies.Count);
+    //}
 
     public void Restart()
     {

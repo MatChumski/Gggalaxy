@@ -9,7 +9,7 @@ public class scriptEnemy : MonoBehaviour
 
     [SerializeField] private GameObject bulletImp;
 
-    [SerializeField] private float speed;
+    public float speed;
     public float minSpeed;
     public float maxSpeed;
 
@@ -140,7 +140,8 @@ public class scriptEnemy : MonoBehaviour
             if (transform.position.y <= posY)
             {
                 alive = false;
-                handler.KillEnemy(gameObject);
+                //handler.KillEnemy(gameObject);
+                Destroy(gameObject);
                 Destroy(collision.gameObject);
             }
         }

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1732956212331798861}
   m_Layer: 0
   m_Name: Boss
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -98,14 +98,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletImp: {fileID: 3192698443436192679, guid: db7a7946da24ced419f52eb2cc5296e0, type: 3}
   speed: 0
-  minSpeed: 0
-  maxSpeed: 0
   fireRate: 0
-  health: 0
+  health: 30
   fireAmount: 0
   rightLimit: 0
   leftLimit: 0
-  posY: 0
 --- !u!61 &1732956212331798861
 BoxCollider2D:
   m_ObjectHideFlags: 0

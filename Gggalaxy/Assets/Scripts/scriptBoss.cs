@@ -8,9 +8,7 @@ public class scriptBoss : MonoBehaviour
 
     [SerializeField] private GameObject bulletImp;
 
-    [SerializeField] private float speed;
-    public float minSpeed;
-    public float maxSpeed;
+    public float speed;
 
     [SerializeField] private float fireRate;
     [SerializeField] private float health;
@@ -23,14 +21,10 @@ public class scriptBoss : MonoBehaviour
     public float rightLimit;
     public float leftLimit;
 
-    public float posY;
-
     // Start is called before the first frame update
     void Start()
     {
         //Propiedades base del enemigo
-        //minSpeed = 3f;
-        //maxSpeed = 6f;
 
         speed = 4f;
         handler = GameObject.Find("GameHandler").GetComponent<scriptGameHandler>();
@@ -40,12 +34,8 @@ public class scriptBoss : MonoBehaviour
 
         fireRate = 0.5f;
         fireCooldown = 0;
-        //fireAmount = 4;
 
         direction = Vector3.right;
-
-        rightLimit = 5f;
-        leftLimit = -5f;
     }
 
 
@@ -56,8 +46,8 @@ public class scriptBoss : MonoBehaviour
         if (health <= 0)
         {
             alive = false;
+            //handler.KillEnemy(gameObject);            
             Destroy(gameObject);
-            
         }
 
         // Según su dirección actual, se mueve a la derecha o izquierda
