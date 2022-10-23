@@ -35,6 +35,9 @@ public class scriptGameHandler : MonoBehaviour
     public GameObject gameOverPnl;
     public GameObject gameOverBtn;
 
+    public AudioSource audioMusic;
+    public AudioClip clipMusic;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -52,6 +55,11 @@ public class scriptGameHandler : MonoBehaviour
         gameOverBtn.GetComponent<Button>().onClick.AddListener(Restart);
 
         gameOverPnl.SetActive(false);
+
+        audioMusic = GetComponentInChildren(typeof(AudioSource)) as AudioSource;
+
+        audioMusic.clip = clipMusic;
+        audioMusic.Play();
 
         /*
          * WAVE TEMPLATES

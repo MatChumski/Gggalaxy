@@ -22,6 +22,10 @@ public class scriptPlayer : MonoBehaviour
     [SerializeField] private float dashCooldown;    // Tiempo EN enfriamiento
     [SerializeField] private float dashForce;       // Multiplicador de impulso
 
+    [SerializeField] private AudioSource audioPlayer;
+    [SerializeField] private AudioClip clipShoot;
+    [SerializeField] private AudioClip clipPUp;
+
     public float health;                // Salud
     public scriptLivesUI livesManager;  // Interfaz de las vidas
     
@@ -46,6 +50,8 @@ public class scriptPlayer : MonoBehaviour
         shieldActive = false;
         speedActive = false;
         tripleActive = false;
+
+        audioPlayer = GetComponentInChildren(typeof(AudioSource)) as AudioSource;
     }
 
     Vector3 direction = Vector3.up;
@@ -187,6 +193,9 @@ public class scriptPlayer : MonoBehaviour
             bullet.transform.position = new Vector3(xBullet, yBullet, 0);
         }
 
+        audioPlayer.clip = clipShoot;
+        audioPlayer.Play();
+
         switch (fireAmount)
         {
             case 1:
@@ -322,18 +331,30 @@ public class scriptPlayer : MonoBehaviour
             }
         }
 
+        void playClip()
+        {
+            audioPlayer.clip = clipPUp;
+            audioPlayer.Play();
+        }
+
         if (collision.CompareTag("PowerUpShield"))
         {
+            playClip();
+
             StartShield();
             Destroy(collision.gameObject);
         }
         if (collision.CompareTag("PowerUpSpeed"))
         {
+            playClip();
+
             StartSpeed();
             Destroy(collision.gameObject);
         }
         if (collision.CompareTag("PowerUpTriple"))
         {
+            playClip();
+
             StartTriple();
             Destroy(collision.gameObject);
         }

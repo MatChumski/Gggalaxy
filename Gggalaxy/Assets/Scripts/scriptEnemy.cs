@@ -25,6 +25,11 @@ public class scriptEnemy : MonoBehaviour
 
     public float posY;
 
+    [SerializeField] private AudioSource audioEnemy;
+    [SerializeField] private AudioClip clipExplosion;
+
+    [SerializeField] private Sprite spriteExplosion;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -35,6 +40,8 @@ public class scriptEnemy : MonoBehaviour
 
         fireRate = Random.Range(0.5f, 1.5f);
         fireCooldown = 0;
+
+        audioEnemy = GetComponentInChildren(typeof(AudioSource)) as AudioSource;
 
         // Dependiendo de la oleada, es más o menos rápido
         if (handler.wave > 20)
@@ -54,50 +61,61 @@ public class scriptEnemy : MonoBehaviour
     }
 
 
-
+    private float deathTimer = 0f;
+    private float timeDeath = 0.7f;
     // Update is called once per frame
     void Update()
     {
-        /*
-         * Si el enemigo todavía no ha llegado a su posición en Y correspondiente, 
-         * se desplaza constantemente hacia abajo
-         */
-        if (transform.position.y >= posY)
+        if (alive)
         {
-            transform.position += Vector3.down * 5 * Time.deltaTime;
-        }
-        else
-        {
-            // Según su dirección actual, se mueve a la derecha o izquierda
-            if (direction == Vector3.right)
+            /*
+             * Si el enemigo todavía no ha llegado a su posición en Y correspondiente, 
+             * se desplaza constantemente hacia abajo
+             */
+            if (transform.position.y >= posY)
             {
-                transform.position += Vector3.right * speed * Time.deltaTime;
-                if (transform.position.x >= rightLimit)
-                {
-                    direction = Vector3.left;
-                }
-            }
-            if (direction == Vector3.left)
-            {
-                transform.position += Vector3.left * speed * Time.deltaTime;
-                if (transform.position.x <= leftLimit)
-                {
-                    direction = Vector3.right;
-                }
-            }
-
-            // Según el fireRate, dispara
-            if (fireCooldown >= fireRate)
-            {
-                Shoot();
+                transform.position += Vector3.down * 5 * Time.deltaTime;
             }
             else
             {
-                fireCooldown += Time.deltaTime;
+                // Según su dirección actual, se mueve a la derecha o izquierda
+                if (direction == Vector3.right)
+                {
+                    transform.position += Vector3.right * speed * Time.deltaTime;
+                    if (transform.position.x >= rightLimit)
+                    {
+                        direction = Vector3.left;
+                    }
+                }
+                if (direction == Vector3.left)
+                {
+                    transform.position += Vector3.left * speed * Time.deltaTime;
+                    if (transform.position.x <= leftLimit)
+                    {
+                        direction = Vector3.right;
+                    }
+                }
+
+                // Según el fireRate, dispara
+                if (fireCooldown >= fireRate)
+                {
+                    Shoot();
+                }
+                else
+                {
+                    fireCooldown += Time.deltaTime;
+                }
+            }
+        } else
+        {
+            if (deathTimer >= timeDeath)
+            {
+                Destroy(gameObject);
+            } else
+            {
+                deathTimer += Time.deltaTime;
             }
         }
-
-
     }
 
     private void Shoot()
@@ -139,10 +157,13 @@ public class scriptEnemy : MonoBehaviour
         {
             if (transform.position.y <= posY)
             {
+                audioEnemy.clip = clipExplosion;
+                audioEnemy.Play();
                 alive = false;
-                //handler.KillEnemy(gameObject);
-                Destroy(gameObject);
+
                 Destroy(collision.gameObject);
+
+                GetComponent<SpriteRenderer>().sprite = spriteExplosion;
             }
         }
     }

@@ -21,6 +21,11 @@ public class scriptBoss : MonoBehaviour
     public float rightLimit;
     public float leftLimit;
 
+    [SerializeField] private AudioSource audioEnemy;
+    [SerializeField] private AudioClip clipExplosion;
+
+    [SerializeField] private Sprite spriteExplosion;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,53 +34,89 @@ public class scriptBoss : MonoBehaviour
         speed = 4f;
         handler = GameObject.Find("GameHandler").GetComponent<scriptGameHandler>();
 
-        health = 15f;
+        health = 30f;
         alive = true;
 
         fireRate = 0.5f;
         fireCooldown = 0;
 
         direction = Vector3.right;
+
+        audioEnemy = GetComponentInChildren(typeof(AudioSource)) as AudioSource;
+
+        if (handler.wave >= 20)
+        {
+            health = 45f;
+            speed = 6f;
+            fireRate = 0.35f;
+        }
+        else if (handler.wave >= 15)
+        {
+            speed = 6f;
+            fireRate = 0.4f;
+        }
+        else if (handler.wave >= 10)
+        {
+            speed = 5f;
+        }
     }
 
-
+    private float deathTimer = 0f;
+    private float timeDeath = 1.5f;
 
     // Update is called once per frame
     void Update()
     {
-        if (health <= 0)
+        if (alive)
         {
-            alive = false;
-            //handler.KillEnemy(gameObject);            
-            Destroy(gameObject);
-        }
-
-        // Según su dirección actual, se mueve a la derecha o izquierda
-        if (direction == Vector3.right)
-        {
-            transform.position += Vector3.right * speed * Time.deltaTime;
-            if (transform.position.x >= rightLimit)
+            if (health <= 0)
             {
-                direction = Vector3.left;
-            }
-        }
-        if (direction == Vector3.left)
-        {
-            transform.position += Vector3.left * speed * Time.deltaTime;
-            if (transform.position.x <= leftLimit)
-            {
-                direction = Vector3.right;
-            }
-        }
+                audioEnemy.clip = clipExplosion;
+                audioEnemy.Play();
 
-        // Según el fireRate, dispara
-        if (fireCooldown >= fireRate)
-        {
-            Shoot();
+                GetComponent<SpriteRenderer>().sprite = spriteExplosion;
+
+                alive = false;                
+            }
+
+            // Según su dirección actual, se mueve a la derecha o izquierda
+            if (direction == Vector3.right)
+            {
+                transform.position += Vector3.right * speed * Time.deltaTime;
+                if (transform.position.x >= rightLimit)
+                {
+                    direction = Vector3.left;
+                }
+            }
+            if (direction == Vector3.left)
+            {
+                transform.position += Vector3.left * speed * Time.deltaTime;
+                if (transform.position.x <= leftLimit)
+                {
+                    direction = Vector3.right;
+                }
+            }
+
+            // Según el fireRate, dispara
+            if (fireCooldown >= fireRate)
+            {
+                Shoot();
+            }
+            else
+            {
+                fireCooldown += Time.deltaTime;
+            }
         }
         else
         {
-            fireCooldown += Time.deltaTime;
+            if (deathTimer >= timeDeath)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                deathTimer += Time.deltaTime;
+            }
         }
     }
 
